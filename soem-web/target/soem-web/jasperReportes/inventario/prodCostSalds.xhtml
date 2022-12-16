@@ -1,0 +1,147 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/facelets/templates/soemTemplate.xhtml">
+
+	<f:metadata>
+		<f:event type="preRenderView" listener='#{prodCostSaldReportControl.buscarRolPrecs}' />
+	</f:metadata>
+	
+	<ui:define name="main">
+
+		<h:form>
+
+			<p:panel id="panel" style="margin-bottom:10px"
+				header="Reporte Inventario - Costos y Saldos">
+
+				<p:focus context="panel" />
+
+				<h:panelGrid columns="4">
+
+					<p:outputLabel for="productoCodigoBarraDesd" value="Código Barra Desde" style="width:100%" />
+					<p:inputText id="productoCodigoBarraDesd" value="#{prodCostSaldReportControl.productoDesd.codigoBarra}" 
+						required="false" styleClass="cajaTextoDescri">
+						<f:validateBean for="productoCodigoBarraDesd" disabled="true" />
+					</p:inputText>
+
+					<p:outputLabel for="productoCodigoBarraHast" value="Código Barra Hasta" style="width:100%" />
+					<p:inputText id="productoCodigoBarraHast" value="#{prodCostSaldReportControl.productoHast.codigoBarra}"
+						required="false" styleClass="cajaTextoDescri">
+						<f:validateBean for="productoCodigoBarraHast" disabled="true" />
+					</p:inputText>
+
+					<p:outputLabel for="productoCodigoDesd" value="Código Desde" style="width:100%" />
+					<p:inputText id="productoCodigoDesd" value="#{prodCostSaldReportControl.productoDesd.codigo}" 
+						required="false" styleClass="cajaTextoDescri">
+						<f:validateBean for="productoCodigoDesd" disabled="true" />
+					</p:inputText>
+
+					<p:outputLabel for="productoCodigoHast" value="Código Hasta" style="width:100%" />
+					<p:inputText id="productoCodigoHast" value="#{prodCostSaldReportControl.productoHast.codigo}"
+						required="false" styleClass="cajaTextoDescri">
+						<f:validateBean for="productoCodigoHast" disabled="true" />
+					</p:inputText>
+					
+					<p:outputLabel for="productoDescriDesd" value="Descripción Desde" style="width:100%" />
+					<p:inputText id="productoDescriDesd" value="#{prodCostSaldReportControl.productoDesd.descri}" 
+						required="false" styleClass="cajaTextoDescri">
+						<f:validateBean for="productoDescriDesd" disabled="true" />
+					</p:inputText>
+
+					<p:outputLabel for="productoDescriHasta" value="Descripción Hasta" style="width:100%" />
+					<p:inputText id="productoDescriHasta" value="#{prodCostSaldReportControl.productoHast.descri}"
+						required="false" styleClass="cajaTextoDescri">
+						<f:validateBean for="productoDescriHasta" disabled="true" />
+					</p:inputText>
+					
+					<p:outputLabel for="ktvCantidMini" value="Cantidad Mínima" style="width:100%" />
+					<p:inputText id="ktvCantidMini" value="#{prodCostSaldReportControl.ktvCantidMini}" 
+						required="false" >
+						<f:validateBean for="ktvCantidMini" disabled="true" />
+					</p:inputText>
+
+					<p:outputLabel for="ktvCantidMaxi" value="Cantidad Máxima" style="width:100%" />
+					<p:inputText id="ktvCantidMaxi" value="#{prodCostSaldReportControl.ktvCantidMaxi}" 
+						required="false" >
+						<f:validateBean for="ktvCantidMaxi" disabled="true" />
+					</p:inputText>
+					
+        			<p:outputLabel for="sucursalList" value="Sucursal" style="width:100%"/>
+        			<p:selectManyMenu id="sucursalList" value="#{prodCostSaldReportControl.sucursalIds}" showCheckbox="true"
+        				converter="omnifaces.SelectItemsConverter" style="width:98%;" 
+        				required="true" requiredMessage="Seleccione Sucursal">
+            				
+            			<f:selectItems value="#{prodCostSaldReportControl.sucursals}" var="sucursal" 
+            				itemLabel="#{sucursal.descri}" itemValue="#{sucursal.sucursalId}" />
+					</p:selectManyMenu>
+
+        			<p:outputLabel for="precioList" value="Precio" style="width:100%"/>
+        			<p:selectOneMenu id="precioList" value="#{prodCostSaldReportControl.precioId}" showCheckbox="true"
+        				converter="omnifaces.SelectItemsConverter" style="width:98%;"
+        				required="true" requiredMessage="Seleccione Precio">
+            			
+            			<f:selectItem itemLabel="Seleccione Precio..." itemValue="" />
+            			<f:selectItems value="#{prodCostSaldReportControl.precios}" var="precio" 
+            				itemLabel="#{precio.descri}" itemValue="#{precio.precioId}" />
+					</p:selectOneMenu>
+										
+        			<p:outputLabel for="prodGrupList" value="Grupo" style="width:100%" />
+        			<p:selectManyMenu id="prodGrupList" value="#{prodCostSaldReportControl.prodGrupIds}" showCheckbox="true"
+        				converter="omnifaces.SelectItemsConverter" style="width:98%" >
+            				
+            			<f:selectItems value="#{prodCostSaldReportControl.prodGrups}" var="prodGrup" 
+            				itemLabel="#{prodGrup.descri}" itemValue="#{prodGrup.prodGrupId}" />
+					</p:selectManyMenu >
+
+					<p:column/>
+					<p:column/>
+
+					<p:outputLabel for="valoracion" value="Valoracion" style="width:100%" />
+        			<p:selectOneRadio id="valoracion" value="#{prodCostSaldReportControl.valoraInve}">
+            			<f:selectItem itemLabel="Costo&#160;Promedio" itemValue="promedio" />
+            			<f:selectItem itemLabel="Costo&#160;Ultimo" itemValue="ultimo" />
+        			</p:selectOneRadio>
+					
+					<p:column/>
+					<p:column/>
+					        				
+					<p:outputLabel for="estado" value="Producto Estado" style="width:100%"/>
+					<p:selectBooleanCheckbox id="estado"
+						value="#{prodCostSaldReportControl.prodEstado}" required="false">
+						<f:validateBean for="estado" disabled="true" />
+					</p:selectBooleanCheckbox>
+		
+					<p:column/>
+					<p:column/>
+		
+					<p:outputLabel value="Formato" style="width:100%"/>
+    				<p:selectOneRadio value="#{prodCostSaldReportControl.formatoReporte}" >
+	    				<f:selectItems value="#{prodCostSaldReportControl.formatoReportes}" var="formatoReporte"  
+    						itemValue="#{formatoReporte.descri}" itemLabel="#{formatoReporte.descri}" />
+        			</p:selectOneRadio>
+
+				</h:panelGrid>
+				
+			</p:panel>
+
+			<div id="barraBotones">
+
+				<p:commandLink id="descargar" ajax="false" styleClass="boton"
+					value="Descargar" action="#{prodCostSaldReportControl.descargar}" />
+
+				<p:spacer height="2" />
+
+				<p:link value="Cancelar" outcome="prodCostSalds" includeViewParams="false"
+					styleClass="boton" />
+
+				<p:defaultCommand target="descargar" />
+
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,18 @@
+package ec.com.tecnointel.soem.serWebSri.registroInt;
+
+import javax.ejb.Local;
+
+import ec.com.tecnointel.soem.serWebClientSri.autorizacion.RespuestaComprobante;
+import ec.com.tecnointel.soem.serWebClientSri.general.AutorizacionDTO;
+
+@Local
+public interface AutorizacionComprobantesWsInt {
+
+	public RespuestaComprobante autorizarComprobante(String proxyIpUrl, String puerto, String ambiente, String urlProduccion,
+			String urlPruebas, String nombreServicio, String claveAcce) throws Exception;
+
+	public AutorizacionDTO obtenerEstadoAutorizacion(RespuestaComprobante respuestaComprobante) throws Exception;
+
+	public void validarRespuestaAutorizacion(AutorizacionDTO autorizacionDTO, String nombreArchivo, String rutaAutorizados) throws Exception;
+	
+}

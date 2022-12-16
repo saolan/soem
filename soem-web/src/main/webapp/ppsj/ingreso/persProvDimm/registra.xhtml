@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/facelets/templates/soemTemplate.xhtml">
+
+	<f:metadata>
+		<f:viewParam name="persProvDimmId" value='#{persProvDimmControl.id}' />
+		<f:viewParam name="personaId" value='#{persProvDimmControl.personaId}' />
+		<f:event type="preRenderView"
+			listener="#{persProvDimmControl.recuperar}" />
+	</f:metadata>
+
+	<ui:define name="main">
+
+		<h:form>
+
+			<p:panel id="panelRegistrar"
+				header="Proveedor Retenciones - Panel Datos"
+				style="margin-bottom:10px; ">
+
+				<p:focus for="panelRegistrar" />
+
+				<h:panelGrid id="grid" columns="2">
+
+					<p:outputLabel for="persProvList" value="Proveedor" />
+					<p:selectOneMenu id="persProvList"
+						value="#{persProvDimmControl.persProvDimm.persProv}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="Seleccione Proveedor">
+						<f:selectItems value="#{persProvDimmControl.persProvs}"
+							var="persProv"
+							itemLabel="#{persProv.persona.apelli} #{persProv.persona.nombre}"
+							itemValue="#{dimm}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="tipo" value="Tipo" />
+					<p:selectOneMenu id="tipo"
+						value="#{persProvDimmControl.persProvDimm.tipo}" required="true"
+						requiredMessage="Seleccione Tipo Impuesto">
+						<f:selectItem itemLabel="Seleccione Tipo Impuesto" itemValue="" />
+						<f:selectItem itemLabel="RENTA_BIEN" itemValue="RENTA_BIEN" />
+						<f:selectItem itemLabel="RENTA_SERV" itemValue="RENTA_SERV" />
+						<f:selectItem itemLabel="IVA_BIEN" itemValue="IVA_BIEN" />
+						<f:selectItem itemLabel="IVA_SERV" itemValue="IVA_SERV" />
+					</p:selectOneMenu>
+					
+					<p:outputLabel for="dimmList" value="Dimm" />
+					<p:selectOneMenu id="dimmList"
+						value="#{persProvDimmControl.persProvDimm.dimm}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="Seleccione Impuesto">
+						<f:selectItem itemLabel="Seleccione Impuesto" itemValue="" />
+						<f:selectItems value="#{persProvDimmControl.dimms}" var="dimm"
+							itemLabel="#{dimm.codigo} - #{dimm.descri} - #{dimm.porcen}"
+							itemValue="#{dimm}" />
+					</p:selectOneMenu>
+					
+				</h:panelGrid>
+
+			</p:panel>
+
+			<div id="barraBotones">
+
+				<p:commandLink id="grabar" value="Grabar" styleClass="boton"
+					action="#{persProvDimmControl.grabar}"
+					rendered="#{(persProvDimmControl.id != null and persProvDimmControl.rolPermiso.get(4001)) or 
+					(persProvDimmControl.id == null and persProvDimmControl.rolPermiso.get(4000)) }" />
+
+				<p:spacer height="2" />
+
+				<p:commandLink id="eliminar" value="Eliminar" styleClass="boton"
+					action="#{persProvDimmControl.eliminar}"
+					rendered="#{persProvDimmControl.id != null and persProvDimmControl.rolPermiso.get(4002)}" />
+
+				<p:spacer height="2" />
+
+				<p:commandLink id="cancelar" value="Cancelar" styleClass="boton"
+					action="#{persProvDimmControl.cancelar}" />
+
+				<p:defaultCommand target="grabar" />
+			</div>
+
+		</h:form>
+
+	</ui:define>
+</ui:composition>

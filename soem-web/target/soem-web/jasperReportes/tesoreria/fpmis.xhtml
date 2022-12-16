@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/facelets/templates/soemTemplate.xhtml">
+
+	<ui:define name="main">
+
+		<h:form>
+
+			<p:panel id="panel" style="margin-bottom:10px"
+				header="Reporte Cuentas Por Pagar - Pagos">
+
+				<p:focus context="panel" />
+
+				<h:panelGrid columns="4">
+				
+					<p:outputLabel for="persProvApelliDesd" value="Apellido Desde" style="width:100%" />
+					<p:inputText id="persProvApelliDesd" value="#{fpmiReportControl.persProvDesd.persona.apelli}" 
+						required="false" styleClass="cajaTextoDescri">
+						<f:validateBean for="persProvApelliDesd" disabled="true" />
+					</p:inputText>
+
+					<p:outputLabel for="persProvApelliHast" value="Apellido Hasta" style="width:100%" />
+					<p:inputText id="persProvApelliHast" value="#{fpmiReportControl.persProvHast.persona.apelli}" 
+						required="false" styleClass="cajaTextoDescri">
+						<f:validateBean for="persProvApelliHast" disabled="true" />
+					</p:inputText>
+
+					<p:outputLabel for="persProvCedulaDesd" value="Cédula Desde" style="width:100%" />
+					<p:inputText id="persProvCedulaDesd" value="#{fpmiReportControl.persProvDesd.persona.cedulaRuc}" 
+						required="false" styleClass="cajaTextoDescri">
+						<f:validateBean for="persProvCedulaDesd" disabled="true" />
+					</p:inputText>
+
+					<p:outputLabel for="persProvCedulaHast" value="Cédula Hasta" style="width:100%" />
+					<p:inputText id="persProvCedulaHast" value="#{fpmiReportControl.persProvHast.persona.cedulaRuc}" 
+						required="false" styleClass="cajaTextoDescri">
+						<f:validateBean for="persProvCedulaHast" disabled="true" />
+					</p:inputText>
+
+					<p:outputLabel for="fpmiFechaDesd" value="Fecha Desde" style="width:100%" />
+					<p:calendar id="fpmiFechaDesd" value="#{fpmiReportControl.fpmiDesd.fecha}" 
+						pattern="dd-MM-yyyy" required="true" requiredMessage="Ingrese fecha desde"/>
+
+					<p:outputLabel for="fpmiFechaHast" value="Fecha Hasta" style="width:100%" />
+					<p:calendar id="fpmiFechaHast" value="#{fpmiReportControl.fpmiHast.fecha}" 
+						pattern="dd-MM-yyyy" required="true" requiredMessage="Ingrese fecha hasta"/>
+
+        			<p:outputLabel for="formPagoList" value="Forma Pago" style="width:100%"/>
+        			<p:selectManyMenu id="formPagoList" value="#{fpmiReportControl.formPagoIds}" showCheckbox="true"
+        				converter="omnifaces.SelectItemsConverter" style="width:100%">
+            				
+            			<f:selectItems value="#{fpmiReportControl.formPagos}" var="formPago" 
+            				itemLabel="#{formPago.descri}" itemValue="#{formPago.formPagoId}" />
+ 
+					</p:selectManyMenu>
+										
+        			<p:outputLabel for="estadoList" value="Estado" style="width:100%"/>
+        			<p:selectManyMenu id="estadoList" value="#{fpmiReportControl.estadoDescris}" showCheckbox="true"
+        				converter="omnifaces.SelectItemsConverter" style="width:100%">
+            				
+            			<f:selectItems value="#{fpmiReportControl.parametroEstados}" var="estado" 
+            				itemLabel="#{estado.descri}" itemValue="#{estado.descri}" />
+ 
+					</p:selectManyMenu>
+
+					<p:outputLabel for="tipo" value="Tipo Reporte" style="width:100%" />
+        			<p:selectOneRadio id="tipo" value="#{fpmiReportControl.nombreReporte}">
+            			<f:selectItem itemLabel="Detalle" itemValue="fpmisDeta" />
+            			<f:selectItem itemLabel="Total" itemValue="fpmis" />
+        			</p:selectOneRadio>
+        			
+					<p:column/>
+					<p:column/>
+
+					<p:outputLabel for="estado" value="Proveedor Estado" style="width:100%"/>
+					<p:selectBooleanCheckbox id="estado"
+						value="#{fpmiReportControl.persProvEstado}" required="false">
+						<f:validateBean for="estado" disabled="true" />
+					</p:selectBooleanCheckbox>
+				
+					<p:spacer/>
+					<p:spacer/>
+					
+					<p:outputLabel value="Formato" style="width:100%"/>
+    				<p:selectOneRadio value="#{fpmiReportControl.formatoReporte}" >
+	    				<f:selectItems value="#{fpmiReportControl.formatoReportes}" var="formatoReporte"  
+    						itemValue="#{formatoReporte.descri}" itemLabel="#{formatoReporte.descri}" />
+        			</p:selectOneRadio>
+																				
+				</h:panelGrid>
+				
+			</p:panel>
+
+			<div id="barraBotones">
+
+				<p:commandLink id="descargar" ajax="false" styleClass="boton"
+					value="Descargar" action="#{fpmiReportControl.descargar}" />
+
+				<p:spacer height="2" />
+
+				<p:link value="Cancelar" outcome="fpmis" includeViewParams="false"
+					styleClass="boton" />
+
+				<p:defaultCommand target="descargar" />
+
+			</div>
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>

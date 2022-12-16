@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	version="3.1"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_1.xsd">
+
+	<display-name>Soem</display-name>
+
+<!-- 	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+ -->
+	<!-- La correlación MIME (Multi-Purpose Internet Mail Extensions) asocia 
+		una extensión de nombre de archivo con un tipo de archivo de datos (texto, 
+		audio, imagen). Utilice estas propiedades para correlacionar un tipo MIME 
+		con una extensión de nombre de archivo. MIME es solo para WebLogic Server. 
+		<mime-mapping> <extension>ico</extension> <mime-type>image/x-icon</mime-type> 
+		</mime-mapping> -->
+
+	<context-param>
+		<param-name>primefaces.THEME</param-name>
+		<param-value>sunny</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE
+		</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>javax.faces.INTERPRET_EMPTY_STRING_SUBMITTED_VALUES_AS_NULL</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
+	<welcome-file-list>
+		<welcome-file>iniciarSesion.xhtml</welcome-file>
+	</welcome-file-list>
+
+	<servlet>
+		<servlet-name>Faces Servlet</servlet-name>
+		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>*.xhtml</url-pattern>
+	</servlet-mapping>
+
+
+</web-app>
