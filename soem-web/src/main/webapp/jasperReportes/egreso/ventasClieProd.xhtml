@@ -1,0 +1,140 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/facelets/templates/soemTemplate.xhtml">
+	
+	<f:metadata>
+		<f:event type="preRenderView" listener='#{ventaClieProdReportControl.buscarRolSucus}' />
+	</f:metadata>
+	
+	<ui:define name="main">
+
+		<h:form>
+
+			<p:panel id="panel" style="margin-bottom:10px"
+				header="Reporte - Ventas Clientes Productos">
+
+				<p:focus context="panel" />
+
+				<h:panelGrid columns="4">
+
+					<p:outputLabel for="clieGrupList" value="Grupo Cliente" style="width:100%"/>
+        			<p:selectManyMenu id="clieGrupList" value="#{ventaClieProdReportControl.clieGrupIds}" converter="omnifaces.SelectItemsConverter" 
+        				 showCheckbox="true" style="width: 100%"> 
+        				
+            			<f:selectItems value="#{ventaClieProdReportControl.clieGrups}" var="clieGrup" 
+            				itemLabel="#{clieGrup.descri}" itemValue="#{clieGrup.clieGrupId}" />
+ 
+					</p:selectManyMenu>
+
+					<p:column></p:column>
+					<p:column></p:column>
+
+					<p:outputLabel for="persClieCedulaDesd" value="Cédula / Ruc Desde" style="width:100%" />
+					<p:inputText id="persClieCedulaDesd" value="#{ventaClieProdReportControl.persClieDesd.persona.cedulaRuc}" 
+						required="false" styleClass="cajaTextoDescri">
+						<f:validateBean for="persClieCedulaDesd" disabled="true" />
+					</p:inputText>
+
+					<p:outputLabel for="persClieCedulaHast" value="Cédula / Ruc Hasta" style="width:100%" />
+					<p:inputText id="persClieCedulaHast" value="#{ventaClieProdReportControl.persClieHast.persona.cedulaRuc}" 
+						required="false" styleClass="cajaTextoDescri">
+						<f:validateBean for="persClieCedulaHast" disabled="true" />
+					</p:inputText>
+
+					<p:outputLabel for="persClieApelliDesd" value="Apellido Desde" style="width:100%" />
+					<p:inputText id="persClieApelliDesd" value="#{ventaClieProdReportControl.persClieDesd.persona.apelli}" 
+						required="false" styleClass="cajaTextoDescri">
+						<f:validateBean for="persClieApelliDesd" disabled="true" />
+					</p:inputText>
+
+					<p:outputLabel for="persClieApelliHast" value="Apellido Hasta" style="width:100%" />
+					<p:inputText id="persClieApelliHast" value="#{ventaClieProdReportControl.persClieHast.persona.apelli}" 
+						required="false" styleClass="cajaTextoDescri">
+						<f:validateBean for="persClieApelliHast" disabled="true" />
+					</p:inputText>
+
+					<p:outputLabel for="productoCodigoBarraDesd" value="Código Barra Desde" style="width:100%" />
+					<p:inputText id="productoCodigoBarraDesd" value="#{ventaClieProdReportControl.productoDesd.codigoBarra}" 
+						required="false" styleClass="cajaTextoDescri">
+						<f:validateBean for="productoCodigoBarraDesd" disabled="true" />
+					</p:inputText>
+
+					<p:outputLabel for="productoCodigoBarraHast" value="Código Barra Hasta" style="width:100%" />
+					<p:inputText id="productoCodigoBarraHast" value="#{ventaClieProdReportControl.productoHast.codigoBarra}"
+						required="false" styleClass="cajaTextoDescri">
+						<f:validateBean for="productoCodigoBarraHast" disabled="true" />
+					</p:inputText>
+					
+					<p:outputLabel for="productoDescriDesd" value="Descripción Desde" style="width:100%" />
+					<p:inputText id="productoDescriDesd" value="#{ventaClieProdReportControl.productoDesd.descri}" 
+						required="false" styleClass="cajaTextoDescri">
+						<f:validateBean for="productoDescriDesd" disabled="true" />
+					</p:inputText>
+
+					<p:outputLabel for="productoDescriHasta" value="Descripción Hasta" style="width:100%" />
+					<p:inputText id="productoDescriHasta" value="#{ventaClieProdReportControl.productoHast.descri}"
+						required="false" styleClass="cajaTextoDescri">
+						<f:validateBean for="productoDescriHasta" disabled="true" />
+					</p:inputText>
+										
+					<p:outputLabel for="egresoFechaDesd" value="Fecha Desde" style="width:100%" />
+					<p:calendar id="egresoFechaDesd" value="#{ventaClieProdReportControl.egresoDesd.fechaEmis}" 
+						pattern="dd-MM-yyyy" required="true" requiredMessage="Ingrese fecha desde"/>
+
+					<p:outputLabel for="egresoFechaHast" value="Fecha Hasta" style="width:100%" />
+					<p:calendar id="egresoFechaHast" value="#{ventaClieProdReportControl.egresoHast.fechaEmis}" 
+						pattern="dd-MM-yyyy" required="true" requiredMessage="Ingrese fecha hasta"/>
+
+
+        			<p:outputLabel for="sucursalList" value="Sucursal" style="width:100%"/>
+        			<p:selectManyMenu id="sucursalList" value="#{ventaClieProdReportControl.sucursalIds}" showCheckbox="true"
+        				converter="omnifaces.SelectItemsConverter" style="width:98%;" 
+        				required="true" requiredMessage="Seleccione Sucursal">
+            				
+            			<f:selectItems value="#{ventaClieProdReportControl.sucursals}" var="sucursal" 
+            				itemLabel="#{sucursal.descri}" itemValue="#{sucursal.sucursalId}" />
+					</p:selectManyMenu>
+
+        			<p:outputLabel for="docuEgreList" value="Documento" style="width:100%"/>
+        			<p:selectManyMenu id="docuEgreList" value="#{ventaClieProdReportControl.docuEgreIds}" converter="omnifaces.SelectItemsConverter" 
+        				 showCheckbox="true" style="width: 100%"> 
+        				
+            			<f:selectItems value="#{ventaClieProdReportControl.docuEgres}" var="docuEgre" 
+            				itemLabel="#{docuEgre.documento.descri}" itemValue="#{docuEgre.documentoId}" />
+ 
+					</p:selectManyMenu>
+																									
+					<p:outputLabel value="Formato" style="width:100%"/>
+    				<p:selectOneRadio value="#{ventaClieProdReportControl.formatoReporte}" >
+	    				<f:selectItems value="#{ventaClieProdReportControl.formatoReportes}" var="formatoReporte"  
+    						itemValue="#{formatoReporte.descri}" itemLabel="#{formatoReporte.descri}" />
+        			</p:selectOneRadio>
+
+				</h:panelGrid>
+				
+			</p:panel>
+
+			<div id="barraBotones">
+
+				<p:commandLink id="descargar" ajax="false" styleClass="boton"
+					value="Descargar" action="#{ventaClieProdReportControl.descargar}" />
+
+				<p:spacer height="2" />
+
+				<p:link value="Cancelar" outcome="ventasClieProd" includeViewParams="false"
+					styleClass="boton" />
+
+				<p:defaultCommand target="descargar" />
+
+			</div>
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>

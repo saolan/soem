@@ -1,0 +1,811 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/facelets/templates/soemTemplate.xhtml">
+
+	<f:metadata>
+		<f:viewParam name="pagina" value='#{compraControl.pagina}' />
+		<f:viewParam name="ingresoId" value='#{compraControl.ingresoId}' />
+		
+		<f:event type="preRenderView" listener='#{compraControl.iniciarCompraDeta}' />
+		<f:event type="preRenderView" listener='#{compraControl.iniciarCompraCabe}' />
+	</f:metadata>
+	
+	<ui:param name="pageTitle" value="Soem - Compras Detalle" />
+
+	<ui:define name="main">
+
+		<h:form id="compraForm">
+
+			<div style="float:left; width:70%;">
+			
+			<p:panel id="cabecera" header="Compra">
+				
+				<h:panelGrid columns="6">
+
+					<p:outputLabel value="Documento" />
+					<p:selectOneMenu id="documentoList" value="#{compraControl.ingreso.docuIngr}" converter="omnifaces.SelectItemsConverter"
+						required="true" requiredMessage="Ingrese Documento">
+						<p:ajax listener="#{compraControl.alCambiarDocuIngr}" event="change" update="compraForm:panelBotones,docuModifica,compraForm:cxpSele,cxpList,totalDocu" />
+						<f:selectItems value="#{compraControl.docuIngrs}" var="docuIngr" 
+							itemLabel="#{docuIngr.documento.descri}" itemValue="#{docuIngr}"/>
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Proveedor" />				
+					<p:selectOneMenu id="proveedorList" value="#{compraControl.ingreso.persProv}" converter="omnifaces.SelectItemsConverter" style="width:100px;"
+						required="true" requiredMessage="Ingrese Proveedor">
+						<p:ajax listener="#{compraControl.crearIngrDetaImpuRetens}" event="change" update="totalDocu,saldoCxp,compraForm:cxpSele,cxpList" />
+						<f:selectItem itemLabel="Seleccione..." itemValue="" />
+						<f:selectItems value="#{compraControl.persProvs}" var="persProv" 
+							itemLabel="#{persProv.persona.apelli} #{persProv.persona.nombre}" itemValue="#{persProv}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Sustento&#160;Trib." />				
+					<p:selectOneMenu id="dimmList" value="#{compraControl.ingreso.dimm}" converter="omnifaces.SelectItemsConverter" style="width:100px;"
+						required="true" requiredMessage="Ingrese Código Impueso">
+						<f:selectItem itemLabel="Seleccione..." itemValue="" />
+						<f:selectItems value="#{compraControl.dimms}" var="dimm" 
+							itemLabel="#{dimm.codigo} - #{dimm.descri}" itemValue="#{dimm}"/>
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Saldo&#160;Cxp" />
+					<h:inputText id="saldoCxp"  value="#{compraControl.saldoProveedor}" disabled="true" style="text-align: right;width:70px;">
+						<f:convertNumber pattern="#0.00" locale="en-US"/>
+					</h:inputText>
+
+
+				<p:outputLabel value="Número" />
+				<p:panelGrid columns="3" styleClass="ui-noborder">
+										
+					<p:inputText id="serie1" value="#{compraControl.ingreso.serie1}" style="width:30px;" maxlength="3" 
+						required="true" requiredMessage="Ingrese serie" />
+						
+					<p:inputText id="serie2" value="#{compraControl.ingreso.serie2}" style="width:30px;" maxlength="3"
+						required="true" requiredMessage="Ingrese serie" />
+					
+					<p:inputText id="numero" value="#{compraControl.ingreso.numero}" style="width:70px;" maxlength="9"
+						required="true" requiredMessage="Ingrese Número" />
+				</p:panelGrid>
+				
+					<p:outputLabel value="F.&#160;Emisión" />
+					<p:calendar id="fechaEmision" value="#{compraControl.ingreso.fechaEmis}" pattern="dd-MM-yyyy" 
+						required="true" requiredMessage="Ingrese fecha emision" inputStyle="width:70px" >
+						<p:ajax event="dateSelect" listener="#{compraControl.copiarFecha}" update="fechaRegistro" />
+					</p:calendar>
+
+					<p:outputLabel value="F.&#160;Registro" />
+					<p:calendar id="fechaRegistro" value="#{compraControl.ingreso.fechaRegi}" pattern="dd-MM-yyyy" 
+						required="true" requiredMessage="Ingrese fecha registro" inputStyle="width:70px"/>
+						
+					<p:outputLabel value="Fecha&#160;Pago" />
+					<p:calendar id="fechaPago" value="#{compraControl.fechaPago}" pattern="dd-MM-yyyy"    
+						required="true" requiredMessage="Ingrese fecha Pago" inputStyle="width:70px"> 
+						<p:ajax event="dateSelect" listener="#{compraControl.calcularDiasPlaz}" update="diasPlaz" />
+					</p:calendar>
+
+					<p:outputLabel value="Días&#160;Plazo" />
+					<p:inputText id="diasPlaz" value="#{compraControl.ingreso.diasPlaz}" style="width:70px;"
+						required="true" requiredMessage="Ingrese dias Plazo">
+						<p:ajax event="change" listener="#{compraControl.calcularFechaPago}" update="fechaPago" />
+					</p:inputText>
+
+					<p:outputLabel value="Descuento" />
+					<p:inputText id="descuento" value="#{compraControl.ingreso.descue}" style="width:70px;"
+						required="true" requiredMessage="Ingrese Descuento">
+						<p:ajax listener="#{compraControl.calcularTotalIngres}" event="blur" update="totalDocu" />	
+					</p:inputText>
+
+
+					<p:outputLabel value="Autorización" />
+					<p:inputText id="autori" value="#{compraControl.ingreso.autori}" style="width:300px;" 
+						required="true" requiredMessage="Ingrese número de autorización"/>
+
+					<p:outputLabel value="Núm.&#160;Cuotas" />
+					<p:inputText id="cuotas" value="#{compraControl.ingreso.numeroCuot}" style="width:70px;"
+					required="true" requiredMessage="Ingrese número cuotas" />
+
+											
+					<p:outputLabel value="Reten.&#160;No." />
+					<p:inputText id="numeroRete" value="#{compraControl.ingreso.numeroRete}" style="width:70px;"
+					required="true" requiredMessage="Ingrese número retención" />
+
+					<p:outputLabel value="Nota" />
+					<p:inputText id="nota" value="#{compraControl.ingreso.nota}" />
+												
+				</h:panelGrid>
+								
+				<h:panelGroup id="docuModifica" >
+					<h:panelGrid columns="3" rendered="#{compraControl.ingreso.docuIngr.dimm.codigo == '04' or compraControl.ingreso.docuIngr.dimm.codigo == '05'}" 
+						style="border-width:1px; border-style: solid">
+						<p:commandLink id="abrirDialogoCxp" style="font-size: 110%; font-weight: bold; color: blue; text-decoration: underline; "  
+							onclick="PF('seleccionCxp').show();"  >
+								<h:outputText value="Seleccione CXP " />
+								<h:graphicImage library="img" name="lupa1.png" width="14px" />
+						</p:commandLink>
+					
+						<p:outputLabel id="cxpSele" style="text-align: left; width:500px; font-size: 110%; font-weight: normal; width: 220px"
+						 	value="#{compraControl.ingreso.ingreso.serie1} #{compraControl.ingreso.ingreso.serie2} #{compraControl.ingreso.ingreso.numero}" />
+						 	
+						<p:commandLink id="eliminarCxp" value="Eliminar CXP" style="font-size: 110%; font-weight: bold; color: blue; text-decoration: underline;" 
+							action="#{compraControl.elimnarCxp}" rendered="#{compraControl.cxpSele.cxpId != null}"
+							ajax="true" update="cxpSele, docuModifica"/>
+						 	
+					</h:panelGrid>
+
+				</h:panelGroup>
+				
+			</p:panel>
+			
+			</div>
+
+
+			<div style="float:right; width:30%;">
+				
+				<p:dataTable id="totalDocu" emptyMessage="Total docu" styleClass="ocultar-nombre-columnas"
+					value="#{compraControl.totalDocus}" var="_total">
+										
+										
+					<p:column style="width:20px;text-align: left" >
+						<h:outputText id="descri" value="#{_total.descri}" />
+					</p:column>
+
+					<p:column style="width:20px;text-align: right">
+						<h:outputText id="valor" value="#{_total.valor}">
+						 	<f:convertNumber pattern="#0.00" locale="en-US"/>
+						</h:outputText>
+					</p:column>	
+
+				</p:dataTable>
+
+			</div>
+
+			<div style="margin-top:5px; float:left; width:100%;">
+													
+			<p:remoteCommand name="modificarCelda" update="ingresoDetaList,totalDocu" />
+						
+			<p:dataTable id="ingresoDetaList" emptyMessage="No se encontro datos"
+				editable="true" editMode="cell" 
+				value="#{compraControl.ingrDetaDataTable}" var="_ingrDeta" rowKey="#{_ingrDeta.ingrDetaId}" 
+				rowStyleClass="#{_ingrDeta.producto.controlMaxMin eq 'maximo' ? 'stockMaximo' : _ingrDeta.producto.controlMaxMin eq 'minimo' ? 'stockMinimo' : null}">
+			
+				<p:ajax event="cellEdit" oncomplete="modificarCelda()" listener="#{compraControl.modificarCelda}" />
+
+				<p:column style="width:20px;text-align: center" headerText="Op.">
+
+					<p:panelGrid styleClass="ui-noborder">
+						
+						<p:commandLink styleClass="ui-icon ui-icon-trash" title="Eliminar" 
+							ajax="true" update="compraForm:ingresoDetaList,compraForm:totalDocu,compraForm:panelBuscar"
+							action="#{compraControl.eliminarIngrDeta}" >
+							<f:setPropertyActionListener value="#{_ingrDeta}" target="#{compraControl.ingrDetaSele}" />
+						</p:commandLink>
+												
+					</p:panelGrid>
+
+				</p:column>
+				
+				<p:column headerText="Cantidad" style="width:50px;text-align: right">
+					<p:cellEditor>
+						<f:facet name="output">
+							<h:outputText id="cantidOutput" value="#{_ingrDeta.cantid}" />
+						</f:facet>
+						<f:facet name="input">
+							<p:inputText id="cantidInput" value="#{_ingrDeta.cantid}" style="width:100%" />
+						</f:facet>
+					</p:cellEditor>
+				</p:column>
+
+				<p:column headerText="Producto">
+					<h:outputText id="descri" value="#{_ingrDeta.producto.descri}" />
+				</p:column>
+
+
+				<p:column headerText="Costo" style="width:60px;text-align: right">
+					<p:cellEditor>
+						<f:facet name="output">
+							<h:outputText id="costoOutput" value="#{_ingrDeta.costo}" />
+						</f:facet>
+						<f:facet name="input">
+							<p:inputText id="costoInput" value="#{_ingrDeta.costo}" style="width:100%" 
+							readonly="#{compraControl.ingreso.docuIngr.documento.factor == -1 and compraControl.ingreso.docuIngr.afectaCost == true}" />
+						</f:facet>
+					</p:cellEditor>				
+					
+				</p:column>
+
+				<p:column headerText="Precio/Presen" style="width:80px;text-align: left">
+				
+ 					<p:commandLink id="abrirDialogo" value="#{_ingrDeta.precio.descri}" onclick="PF('seleccionPrecioDialogo').show();"
+						action="#{compraControl.buscarIngrDetaPrecs}" update="compraForm:prodPrec">
+						
+ 						<f:setPropertyActionListener value="#{_ingrDeta.producto.productoId}"
+							target="#{compraControl.productoId}" />
+							
+						<f:setPropertyActionListener value="#{_ingrDeta}" 
+							target="#{compraControl.ingrDetaSele}" />							
+					</p:commandLink>
+					
+				</p:column>
+				
+				<p:column headerText="Descuento" style="width:50px;text-align: right">
+					<p:cellEditor>
+						<f:facet name="output">
+							<h:outputText id="descueOutput" value="#{_ingrDeta.descue}" />
+						</f:facet>
+						<f:facet name="input">
+							<p:inputText id="descueInput" value="#{_ingrDeta.descue}"
+								style="width:100%" />
+						</f:facet>
+					</p:cellEditor>
+					
+				</p:column>
+				
+				<p:column id="impuestoPorcenCol" headerText="Iva %" style="width:35px;text-align: right">
+					<h:outputText id="impuestoPorcen" value="#{_ingrDeta.producto.dimm.porcen}">
+						<f:convertNumber pattern="#0.00" locale="en-US"/>
+					</h:outputText>
+				</p:column>
+				
+				<p:column id="totalCol" headerText="Total" style="width:60px;text-align: right">
+					<h:outputText id="total" value="#{_ingrDeta.total}">
+						<f:convertNumber pattern="#0.00" locale="en-US"/>
+					</h:outputText>
+				</p:column>
+				
+			</p:dataTable>
+			
+			</div>
+						
+
+			<div id="barraBotones" style="margin-top: 10px; float: left; width: 68%;">
+
+				<h:panelGroup id="panelBotones">
+
+					<p:commandLink id="grabar" styleClass="boton" ajax="false" value="Grabar" 
+						action="#{compraControl.grabar}"
+						rendered="#{compraControl.estadoActual().equals('GR')}" />
+
+					<p:spacer height="2" />
+
+					<p:commandLink id="generarRetencion" ajax="false" styleClass="boton" value="Generar Retención" 
+						action="#{compraControl.generarRetencion}" 
+						rendered="#{compraControl.estadoActual().equals('PR') and 
+							ingresoControl.rolPermiso.get(4104) }" />
+
+					<p:spacer height="2" />
+					
+				<p:commandLink id="buscar" value="Buscar" styleClass="boton" 
+					action="#{compraControl.buscarProdPrecs(0)}" 
+					ajax="true" update="productoList,compraForm:ingresoDetaList,compraForm:totalDocu,panelBuscar,paginadorProductos"/>
+
+				<p:spacer height="2" />
+
+ 				<p:commandLink value="Facturar" title="Facturar" styleClass="boton" ajax="true"
+					action="#{compraControl.navegarCabecera}"  >
+					<f:setPropertyActionListener value="#{compraControl.ingresoId}"
+						target="#{compraControl.ingresoId}" />
+				</p:commandLink>
+
+				<p:spacer height="2" />
+				
+				<p:link value="Cancelar" includeViewParams="false" styleClass="boton" 
+					outcome="/ppsj/ingreso/ingreso/lista" />
+
+				<p:defaultCommand target="buscar" />
+					
+					<p:commandLink id="descargar" ajax="false" styleClass="boton" value="Descargar" 
+						action="#{compraControl.descargar}" 
+						rendered="#{ingresoControl.rolPermiso.get(4106) and compraControl.ingresoId != null}" />
+
+					<p:spacer height="2" />
+					
+					<p:commandLink id="abrirDialogo" styleClass="boton" 
+ 						value="Pagar" action="#{compraControl.cargarFormPagoMoviIngr}" 
+						onclick="PF('formaPagoDialogo').show();" update="proveedor,formPagoList,documentoPagoList,total"
+						rendered="#{!compraControl.estadoActual().equals('AN') and 
+							compraControl.rolPermiso.get(4105)}" />
+
+					<p:spacer height="2" />
+					
+					<p:commandLink id="regresar" value="Regresar" styleClass="boton" onclick="history.back()" />
+
+					<p:spacer height="2" />
+					
+						<p:commandLink id="abrirDialogoProducto" style=" font-size: 130%; font-weight: bold; color: blue; text-decoration: underline;" 
+						onclick="PF('buscarProdutosDialogo').show();" >
+						<h:graphicImage library="img" name="lupa1.png" width="14px" />	
+					</p:commandLink>
+					
+					<p:spacer height="2" />
+
+					<div style="float: right;">
+					
+	 					<p:commandLink id="abrirDialogoConvertir" styleClass="boton" 
+ 							value="Convertir" action="#{compraControl.cargarDatosConvertir}" 
+							onclick="PF('convertirDialogo').show();" update="rolSucuConvertirList"
+							rendered="#{compraControl.ingresoId != null and compraControl.rolPermiso.get(4112)}" />
+						
+						<p:spacer height="2" />
+					
+						<p:commandLink id="anular2" ajax="false" styleClass="boton" value="DesProcesar" 
+							action="#{compraControl.anular2}" 
+							rendered="#{!compraControl.estadoActual().equals('GR') and !compraControl.estadoDocuElecRete.equals('AUTORIZADO') and ingresoControl.rolPermiso.get(4108)}" />
+						
+						<p:spacer height="2" />
+						
+						<p:commandLink id="anular" ajax="false" styleClass="boton" value="Anular" 
+							action="#{compraControl.anular}" 
+							rendered="#{compraControl.estadoActual().equals('PR') and ingresoControl.rolPermiso.get(4107)}" />
+							
+					</div>
+
+				</h:panelGroup>
+
+			</div>
+
+
+
+    		<p:dialog id="selecionPrecio" widgetVar="seleccionPrecioDialogo" width="50%"  
+    			header="Seleccione Precio" modal="true" resizable="false"  >
+    			<p:ajax event="close" update="compraForm:panelBuscar" />
+    			
+				<p:dataTable id="prodPrec" style="margin-bottom:5px;"
+					emptyMessage="No se encontro datos"
+					editable="true" editMode="cell" rowKey="#{IngrDetaPrec.ingrDetaPrecId}"
+					value="#{compraControl.ingrDetaPrecs}" var="_ingrDetaPrec">
+
+					<p:column headerText="Código">
+
+ 						<p:commandLink id="prodPrecCodigo" value="#{_ingrDetaPrec.precio.codigo}" onclick="PF('seleccionPrecioDialogo').hide();"
+ 							action="#{compraControl.seleccionarPrecio}" update="compraForm:ingresoDetaList,compraForm:totalDocu,compraForm:panelBuscar">
+ 							<f:setPropertyActionListener value="#{_ingrDetaPrec.precio}"
+								target="#{compraControl.prodPrecSele}" />
+						</p:commandLink>
+						
+					</p:column>
+					
+					<p:column headerText="Descripción">
+
+ 						<p:commandLink id="prodPrecSele1" value="#{_ingrDetaPrec.precio.descri}" onclick="PF('seleccionPrecioDialogo').hide();"
+ 							action="#{compraControl.seleccionarPrecio}" update="compraForm:ingresoDetaList,compraForm:totalDocu,compraForm:panelBuscar">
+ 							<f:setPropertyActionListener value="#{_ingrDetaPrec.precio}"
+								target="#{compraControl.prodPrecSele}" />
+						</p:commandLink>
+						
+					</p:column>
+
+					<p:column headerText="Factor Inventario" style="text-align:right">
+						<h:outputText value="#{_ingrDetaPrec.factor}" >
+							<f:convertNumber pattern="#0.00" locale="en-US"/>
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Utilidad %" style="text-align:right">
+						<p:cellEditor>
+							<f:facet name="output">
+							 	<h:outputText id="utilidOutput" value="#{_ingrDetaPrec.utilid}">
+							 		<f:convertNumber pattern="#0.0000" locale="en-US"/>
+							 	</h:outputText>
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText id="utilidInput" value="#{_ingrDetaPrec.utilid}" style="width:100%">
+									<f:convertNumber pattern="#0.0000" locale="en-US"/>
+									<p:ajax event="change" listener="#{compraControl.calcularPrecio}" update="precioConImpuOutput,precioConImpuInput,precioSinImpu,utilidOutput" />
+								</p:inputText>
+							</f:facet>
+						</p:cellEditor>
+						
+					</p:column>
+
+ 					<p:column headerText="Precio Sin Impuestos" style="text-align:right">
+ 						<h:outputText id="precioSinImpu" value="#{_ingrDetaPrec.precioSinImpu}">
+ 							<f:convertNumber pattern="#0.0000" locale="en-US"/>
+ 						</h:outputText>
+					</p:column>
+
+ 					<p:column headerText="Precio Con Impuestos" style="text-align:right">
+						<p:cellEditor>
+							<f:facet name="output">
+							 	<h:outputText id="precioConImpuOutput" value="#{_ingrDetaPrec.precioConImpu}">
+							 		<f:convertNumber pattern="#0.0000" locale="en-US"/>
+							 	</h:outputText>
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText id="precioConImpuInput" value="#{_ingrDetaPrec.precioConImpu}" style="width:100%" >
+									<f:convertNumber pattern="#0.0000" locale="en-US"/>
+									<p:ajax event="change" listener="#{compraControl.calcularUtilidad}" update="utilidOutput,utilidInput,precioSinImpu,precioConImpuOutput" />
+								</p:inputText>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+				</p:dataTable>
+ 
+    		</p:dialog>
+    		
+    		<p:dialog id="consultarInventario" widgetVar="consultarInventarioDialogo" width="70%"  
+    			header="Consulta Inventario" modal="true" resizable="false"  >
+    			
+				<p:dataTable id="karkTotaView" style="margin-bottom:5px;"
+					emptyMessage="No se encontro datos"
+					value="#{compraControl.kardTotaViews}" var="_kardTotaView">
+
+					<p:column headerText="Sucursal" style="width:200px;text-align: left">
+						<h:outputText value="#{_kardTotaView.sucuDescri}"/> 
+					</p:column>
+					
+					<p:column headerText="Producto">
+						<h:outputText value="#{_kardTotaView.prodDescri}"/>
+					</p:column>
+					
+					<p:column headerText="Stock" style="width:80px;text-align: right">
+						<h:outputText value="#{_kardTotaView.cantidSald}">
+							<f:convertNumber pattern="#0.00" locale="en-US"/>
+						</h:outputText>
+					</p:column>
+
+				</p:dataTable>
+ 
+    		</p:dialog> 
+
+    		<p:dialog id="formaPago" widgetVar="formaPagoDialogo" header="Pago Factura" 
+    			modal="true" resizable="false" focus="formPagoList" >
+    			
+    			<p:growl id="growl" sticky="true" showDetail="true" life="3000" />
+    			
+    			<p:panel id="panelRegistrar" style="margin-bottom:10px; ">
+
+					<h:panelGrid id="grid" columns="2">
+					
+						<p:outputLabel value="Proveedor" />
+						<p:outputLabel id="proveedor" value="#{compraControl.formPagoMoviIngr.persona.apelli} #{compraControl.formPagoMoviIngr.persona.nombre}"
+							style="width:100%;text-align: left"/>
+					
+						<p:outputLabel value="Documento" />
+						<p:selectOneMenu id="documentoPagoList" value="#{compraControl.formPagoMoviIngr.docuMoviIngr}" converter="omnifaces.SelectItemsConverter"
+							required="false" requiredMessage="Seleccione documento">
+							<p:ajax event="change" listener="#{compraControl.filtrarFormPago}" update="formPagoList" />
+							<f:selectItems value="#{compraControl.docuMoviIngrs}" var="docuMoviIngr" 
+								itemLabel="#{docuMoviIngr.documento.descri}" itemValue="#{docuMoviIngr}"/>
+						</p:selectOneMenu>
+		
+						<p:outputLabel for="formPagoList" value="Forma Pago" />				
+						<p:selectOneMenu id="formPagoList" value="#{compraControl.formPagoMoviIngr.formPago}" converter="omnifaces.SelectItemsConverter"
+							required="false" requiredMessage="Seleccione forma de pago">
+							<f:selectItem itemLabel="Seleccione..." itemValue="" />
+							<f:selectItems value="#{compraControl.formPagos}" var="formPago" 
+								itemLabel="#{formPago.descri}" itemValue="#{formPago}"/>
+						</p:selectOneMenu>
+							
+						<p:outputLabel for="refere" value="Referencia" />
+						<p:inputText id="refere" value="#{compraControl.formPagoMoviIngr.refere}" 
+							required="false" styleClass="cajaTextoDescri" />
+					
+						<p:outputLabel for="notaCobro" value="Nota" />
+						<p:inputText id="notaCobro" value="#{compraControl.formPagoMoviIngr.nota}" 
+							required="false" styleClass="cajaTextoDescri" />
+
+						<p:outputLabel for="total" value="Total" />
+						<h:inputText id="total" value="#{compraControl.formPagoMoviIngr.total}" disabled="true" style="font-size:270%; text-align:right" >
+							<f:convertNumber pattern="#0.00" locale="en-US"/>
+						</h:inputText>
+
+					</h:panelGrid>
+				</p:panel>
+										
+				<p:commandLink id="procesarDialogo" styleClass="boton" value="Procesar" 
+						action="#{compraControl.procesarDialogo}" oncomplete="handleLoginRequest(xhr, status, args)"
+						rendered="#{(compraControl.estadoActual().equals('GR') or compraControl.estadoActual() == null) and 
+							ingresoControl.rolPermiso.get(4104) }" />
+
+				<p:spacer height="2" />
+			
+				<p:commandLink id="cancelar" ajax="false" styleClass="boton" value="Cancelar" 
+						onclick="PF('formaPagoDialogo').hide();" />
+
+   			</p:dialog>
+
+			<p:dialog id="convertir" widgetVar="convertirDialogo"
+				header="Convertir Documento" modal="true" resizable="false"
+				focus="rolSucuConvertirList">
+
+				<p:growl id="growlConvertir" sticky="true" showDetail="true"
+					life="3000" />
+
+				<p:panel id="panelConvertir" style="margin-bottom:10px; ">
+
+					<h:panelGrid id="gridConvertir" columns="2">
+
+						<p:outputLabel value="Sucursal" />
+						<p:selectOneMenu id="rolSucuConvertirList"
+							value="#{compraControl.rolSucuConvertir}" converter="omnifaces.SelectItemsConverter" required="false" requiredMessage="Seleccione Sucursal">
+							<f:selectItem itemLabel="Seleccione sucursal destino..."
+								itemValue="" />
+							<f:selectItems value="#{compraControl.rolSucuConvertirs}"
+								var="rolSucu" itemLabel="#{rolSucu.sucursal.descri}"
+								itemValue="#{rolSucu}" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="Documento" />
+						<p:selectOneMenu id="documentoConvertirList" value="#{compraControl.docuIngrConvertir}" converter="omnifaces.SelectItemsConverter">
+							<f:selectItem itemLabel="Seleccione documento destino..."
+								itemValue="" />
+							<f:selectItems value="#{compraControl.docuIngrs}" var="docuIngr"
+								itemLabel="#{docuIngr.documento.descri}" itemValue="#{docuIngr}" />
+						</p:selectOneMenu>
+
+					</h:panelGrid>
+				</p:panel>
+
+				<p:commandLink id="aceptarConvertirDialogo" styleClass="boton" value="Aceptar" action="#{compraControl.convertir}"
+					oncomplete="handleLoginRequestConvertir(xhr, status, args)" />
+
+				<p:spacer height="2" />
+
+				<p:commandLink id="cancelarConvertirDialogo" ajax="false" styleClass="boton" value="Cancelar"
+					onclick="PF('convertirDialogo').hide();" />
+
+			</p:dialog>
+			
+			<p:dialog id="seleccionCxp" widgetVar="seleccionCxp" width="60%"
+				header="Seleccionar Cxp" modal="true" resizable="false"	>
+				
+				<p:panel id="panelCxp" style="margin-bottom:10px">
+
+					<h:panelGrid columns="3">
+
+						<h:panelGrid columns="1">
+							<p:outputLabel for="numeroCxp" value="Documento Número" style="width:100%;"/>
+							<p:inputText id="numeroCxp" value="#{compraControl.cxpBuscar.ingreso.numero}" 
+								required="false">
+								<f:validateBean for="numeroCxp" disabled="true" />
+							</p:inputText>
+						</h:panelGrid>
+
+						<h:panelGrid columns="1">
+							<p:outputLabel for="fechaEmisCxp" value="Fecha Emisión" style="width:100%;"/>
+							<p:calendar id="fechaEmisCxp" value="#{compraControl.cxpBuscar.ingreso.fechaEmis}" pattern="dd-MM-yyyy" 
+								required="false">
+								<f:validateBean for="fechaEmisCxp" disabled="true" />
+							</p:calendar> 
+						</h:panelGrid>
+
+						<h:panelGrid columns="1">
+							<p:outputLabel for="estadoCxp" value="Estado" style="width:100%;"/>
+							<p:selectBooleanCheckbox id="estadoCxp" value="#{compraControl.cxpBuscar.estado}"/>
+							</h:panelGrid>
+						</h:panelGrid>
+
+				</p:panel>
+				
+				<p:commandLink id="buscarCxps" value="Buscar"
+					styleClass="boton" action="#{compraControl.buscarCxps}"
+					update="compraForm:cxpList,paginadorCxps" />
+				
+
+				<p:dataTable id="cxpList" style="margin-top:10px;" emptyMessage="No se encontro datos"
+					value="#{compraControl.cxps}" var="_cxp">
+
+					<p:column headerText="Fecha Emisión" style="width:100px; text-align: center">
+						
+						<p:commandLink id="fechaEmis" title="Seleccionar Cuenta por Pagar"
+							action="#{compraControl.seleccionarCxp}"
+							value="#{_cxp.ingreso.fechaEmis}" ajax="true"
+							update="compraForm:cxpSele, compraForm:docuModifica" 
+							oncomplete="controlarSeleccionCxpDialogo(xhr, status, args)">
+
+							<f:setPropertyActionListener value="#{_cxp}"
+								target="#{compraControl.cxpSele}" />
+						</p:commandLink>
+					</p:column>
+
+					<p:column headerText="Fecha Vencimiento" style="width:100px; text-align: center">
+					
+						<p:commandLink id="fechaVenc" title="Seleccionar Cuenta por Pagar"
+							action="#{compraControl.seleccionarCxp}"
+							value="#{_cxp.fechaVenc}" ajax="true"
+							update="compraForm:cxpSele, compraForm:docuModifica" 
+							oncomplete="controlarSeleccionCxpDialogo(xhr, status, args)">
+
+							<f:setPropertyActionListener value="#{_cxp}"
+								target="#{compraControl.cxpSele}" />
+						</p:commandLink>
+					</p:column>
+
+					<p:column headerText="Número Documento" style="width:80px; text-align: right">
+					
+						<p:commandLink id="docuIngr" title="Seleccionar Cuenta por Pagar"
+							action="#{compraControl.seleccionarCxp}"
+							value="#{_cxp.ingreso.numero}" ajax="true"
+							update="compraForm:cxpSele, compraForm:docuModifica" 
+							oncomplete="controlarSeleccionCxpDialogo(xhr, status, args)">
+
+							<f:setPropertyActionListener value="#{_cxp}"
+								target="#{compraControl.cxpSele}" />
+						</p:commandLink>
+					</p:column>
+
+					<p:column headerText="Total" style="width:80px; text-align: right">
+						<h:outputText id="total" value="#{_cxp.total}" >
+							<f:convertNumber pattern="#0.00" locale="en-US"/>
+						</h:outputText>
+					</p:column>
+				
+					<p:column headerText="Abono" style="width:80px; text-align: right">
+						<h:outputText id="abono" value="#{_cxp.abono}" >
+							<f:convertNumber pattern="#0.00" locale="en-US"/>
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Saldo" style="width:80px; text-align: right">
+						<h:outputText id="saldo" value="#{_cxp.saldo}" >
+							<f:convertNumber pattern="#0.00" locale="en-US"/>
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Estado" style="width:40px; text-align: center">
+						<h:selectBooleanCheckbox id="estado" value="#{_cxp.estado}" disabled="true"/>
+					</p:column>
+
+				</p:dataTable>
+
+				<div align="center">
+
+					<h:panelGroup id="paginadorCxps">
+		
+						<p:commandButton value="Anterior" ajax="true" update="compraForm:cxpList,paginadorCxps"
+							rendered="#{compraControl.paginaCxp gt 0}" 
+							action="#{compraControl.buscarCxps}">
+							<f:param name="paginaCxp" value="#{compraControl.paginaCxp - 1}"/>
+						</p:commandButton>
+			
+						<p:commandButton value="Siguiente" ajax="true" update="compraForm:cxpList,paginadorCxps" 
+							rendered="#{(compraControl.paginaCxp + 1) * compraControl.filasPagina lt compraControl.contadorRegCxp}"
+							action="#{compraControl.buscarCxps}">
+							<f:param name="paginaCxp" value="#{compraControl.paginaCxp + 1}"/>
+						</p:commandButton>
+		
+					</h:panelGroup>					
+				</div>
+
+			</p:dialog>
+
+			<p:dialog id="buscarProdutos" widgetVar="buscarProdutosDialogo" visible="true"
+				header="Buscar Productos" modal="false" resizable="false" width="40%"
+				position="right bottom" 
+				focus="codigoBarra">
+
+				<p:panel id="panelBuscar" >
+				
+				<p:focus for="codigoBarra" />
+
+				<h:panelGrid columns="4">
+
+					<p:outputLabel for="codigoBarra" value="Código Barra" />
+					<p:inputText id="codigoBarra" onblur="moverCursor('compraForm:codigoBarra','compraForm:codigoBarra')"
+						value="#{compraControl.prodPrec.producto.codigoBarra}" required="false" style="width:110px;">
+						<f:validateBean for="codigoBarra" disabled="true" />
+					</p:inputText>
+					
+					<p:outputLabel for="codigo" value="Código" />
+					<p:inputText id="codigo" 
+						value="#{compraControl.prodPrec.producto.codigo}" required="false" style="width:110px;">
+						<f:validateBean for="codigo" disabled="true" />
+					</p:inputText>
+										
+					<p:outputLabel for="descri" value="Descripción" />
+					<p:inputText id="descri"
+						value="#{compraControl.prodPrec.producto.descri}" required="false" style="width:110px;">
+						<f:validateBean for="descri" disabled="true" />
+					</p:inputText>
+					
+					<p:outputLabel for="tipoList" value="Tipo" />				
+					<p:selectOneRadio id="tipoList" value="#{compraControl.prodPrec.producto.prodGrup.tipo}" 
+						required="true" >
+						<f:selectItems value="#{compraControl.parametros}" var="parametro" 
+							itemLabel="#{parametro.descri}" itemValue="#{parametro.descri}"/>
+					</p:selectOneRadio>
+					
+				</h:panelGrid>
+				
+			 	</p:panel>
+			 				
+			<p:dataTable id="productoList" style="margin-bottom:5px; margin-top:5px;" styleClass="ocultar-nombre-columnas" 
+				emptyMessage="No se encontro datos" value="#{compraControl.prodPrecs}" var="_prodPrec">
+
+					<p:column style="width:16px;text-align: center" >
+ 						<p:commandLink id="abrirDialogoInventario" styleClass="ui-icon ui-icon-circle-zoomin" title="Consultar Inventario" onclick="PF('consultarInventarioDialogo').show();"
+							action="#{compraControl.buscarKardTotaViews}" update="compraForm:karkTotaView">
+ 							<f:setPropertyActionListener value="#{_prodPrec.producto.productoId}"
+								target="#{compraControl.productoId}" />
+						</p:commandLink>
+						
+					</p:column>
+
+				<p:column rendered="#{compraControl.activarIngrDetaCodigoBarra}" style="width:100px;text-align: left" >
+					<p:commandLink id="agregarCodigoBarra" title="Agregar producto" value="#{_prodPrec.producto.codigoBarra}" 
+						action="#{compraControl.agregarProducto}" ajax="true" update="compraForm:ingresoDetaList,compraForm:totalDocu,compraForm:panelBuscar" >
+
+						<f:setPropertyActionListener value="#{_prodPrec.producto.productoId}"
+							target="#{compraControl.productoId}" />
+							
+						<f:setPropertyActionListener value="#{_prodPrec}"
+							target="#{compraControl.prodPrecSele}" />
+							
+					</p:commandLink>
+				</p:column>
+
+				<p:column rendered="#{compraControl.activarIngrDetaDescri}" >
+					<p:commandLink id="agregarDescri" title="Agregar producto" value="#{_prodPrec.producto.descri}"
+						oncomplete="moverCursor('agregarDescri','compraForm:codigoBarra')" 
+						action="#{compraControl.agregarProducto}" ajax="true" update="compraForm:ingresoDetaList,compraForm:totalDocu,compraForm:panelBuscar" >
+
+						<f:setPropertyActionListener value="#{_prodPrec.producto.productoId}"
+							target="#{compraControl.productoId}" />
+							
+						<f:setPropertyActionListener value="#{_prodPrec}"
+							target="#{compraControl.prodPrecSele}" />
+							
+					</p:commandLink>
+				</p:column>
+				
+				<p:column rendered="#{compraControl.activarIngrDetaPrecio}" style="width:15%;text-align: right" >
+					<p:commandLink id="agregarPrecio" title="Agregar producto"  
+						action="#{compraControl.agregarProducto}" ajax="true" update="compraForm:ingresoDetaList,compraForm:totalDocu,compraForm:panelBuscar" >
+
+						<h:outputText id="valor" value="#{_prodPrec.precioConImpu}">
+					 		<f:convertNumber pattern="#0.0000" locale="en-US"/>
+						</h:outputText>
+
+						<f:setPropertyActionListener value="#{_prodPrec.producto.productoId}"
+							target="#{compraControl.productoId}" />
+							
+						<f:setPropertyActionListener value="#{_prodPrec}"
+							target="#{compraControl.prodPrecSele}" />
+							
+					</p:commandLink>
+				</p:column>
+
+			</p:dataTable>
+						 
+			<div align="center" >
+			<h:panelGroup id="paginadorProductos" >
+	
+				<h:commandLink styleClass="boton" rendered="#{compraControl.pagina gt 0}" 
+					action="#{compraControl.buscarProdPrecs(1)}">
+					<f:param name="pagina" value="#{compraControl.pagina - 1}"/>
+					&lt; Anterior  
+				</h:commandLink>
+			
+				<h:commandLink styleClass="boton" rendered="#{(compraControl.pagina + 1) * compraControl.filasProductos lt compraControl.contadorReg}"
+					action="#{compraControl.buscarProdPrecs(1)}" >
+					<f:param name="pagina" value="#{compraControl.pagina + 1}"/>
+					Siguiente &gt;
+				</h:commandLink>
+		
+			</h:panelGroup>
+			</div>
+
+			</p:dialog>
+
+		</h:form>
+
+		<script type="text/javascript">
+
+	        function moverCursor(desde, hasta) {
+		        
+				if (desde != hasta){
+		        	document.getElementById(hasta).click();
+		        	document.getElementById(hasta).focus();
+				}		       
+	        }		    
+		</script>
+
+	</ui:define>
+
+</ui:composition>

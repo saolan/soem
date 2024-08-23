@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/facelets/templates/soemTemplate.xhtml">
+
+	<ui:define name="main">
+
+		<h:form>
+
+			<p:panel id="panel" style="margin-bottom:10px"
+				header="Anexo Transaccional">
+
+				<p:focus context="panel" />
+
+				<h:panelGrid style="margin-bottom:10px">
+
+					<p:outputLabel
+						value="Se reportaran facturas de Compra y Retenciones"
+						style="width:100%; text-align:center" />
+
+					<p:outputLabel
+						value="Antes de emitir este reporte procese todos los documentos."
+						style="width:100%; text-align:center" />
+
+					<p:outputLabel
+						value="Los documentos con estado Grabado (GR)"
+						style="width:100%; text-align:center" />
+					<p:outputLabel value="no se procesara en el reporte"
+						style="width:100%; text-align:center" />
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+
+					<p:outputLabel for="ingresoFechaDesd" value="Fecha Desde"
+						style="width:100%" />
+					<p:calendar id="ingresoFechaDesd"
+						value="#{atsSriControl.fechaDesd}" pattern="dd-MM-yyyy"
+						required="true" requiredMessage="Ingrese fecha desde" />
+
+					<p:outputLabel for="ingresoFechaHast" value="Fecha Hasta"
+						style="width:100%" />
+					<p:calendar id="ingresoFechaHast"
+						value="#{atsSriControl.fechaHast}" pattern="dd-MM-yyyy"
+						required="true" requiredMessage="Ingrese fecha hasta" />
+
+				</h:panelGrid>
+
+			</p:panel>
+
+			<div id="barraBotones">
+
+				<p:commandLink id="descargarEnXml" ajax="false" styleClass="boton"
+					value="Descargar Xml" action="#{atsSriControl.generarXmlAtsSri}" />
+
+				<p:link value="Cancelar" outcome="atsSri" includeViewParams="false"
+					styleClass="boton" />
+
+				<p:defaultCommand target="descargarEnXml" />
+
+			</div>
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/facelets/templates/soemTemplate.xhtml">
+	
+	<f:metadata>
+		<f:event type="preRenderView" listener='#{ventaProdMMVendReportControl.buscarRolSucus}' />
+	</f:metadata>
+	
+	<ui:define name="main">
+
+		<h:form>
+
+			<p:panel id="panel" style="margin-bottom:10px"
+				header="Reporte - Ventas Productos Mas Vendidos">
+
+				<p:focus context="panel" />
+
+				<h:panelGrid columns="4">
+					
+					<p:outputLabel for="sucursalList" value="Sucursal" style="width:100%"/>
+        			<p:selectManyMenu id="sucursalList" value="#{ventaProdMMVendReportControl.sucursalIds}" showCheckbox="true"
+        				converter="omnifaces.SelectItemsConverter" style="width:98%;" 
+        				required="true" requiredMessage="Seleccione Sucursal">
+            				
+            			<f:selectItems value="#{ventaProdMMVendReportControl.sucursals}" var="sucursal" 
+            				itemLabel="#{sucursal.descri}" itemValue="#{sucursal.sucursalId}" />
+					</p:selectManyMenu>
+
+        			<p:outputLabel for="docuEgreList" value="Documento" style="width:100%"/>
+        			<p:selectManyMenu id="docuEgreList" value="#{ventaProdMMVendReportControl.docuEgreIds}" converter="omnifaces.SelectItemsConverter" 
+        				 showCheckbox="true" style="width: 100%"> 
+        				
+            			<f:selectItems value="#{ventaProdMMVendReportControl.docuEgres}" var="docuEgre" 
+            				itemLabel="#{docuEgre.documento.descri}" itemValue="#{docuEgre.documentoId}" />
+ 
+					</p:selectManyMenu>
+					
+					<p:outputLabel for="egresoFechaDesd" value="Fecha Desde" style="width:100%" />
+					<p:calendar id="egresoFechaDesd" value="#{ventaProdMMVendReportControl.egresoDesd.fechaEmis}" 
+						pattern="dd-MM-yyyy" required="true" requiredMessage="Ingrese fecha desde"/>
+
+					<p:outputLabel for="egresoFechaHast" value="Fecha Hasta" style="width:100%" />
+					<p:calendar id="egresoFechaHast" value="#{ventaProdMMVendReportControl.egresoHast.fechaEmis}" 
+						pattern="dd-MM-yyyy" required="true" requiredMessage="Ingrese fecha hasta"/>
+																				
+					<p:outputLabel for="producLimi" value="Número Productos" style="width:100%" />
+					<p:inputText id="producLimi" value="#{ventaProdMMVendReportControl.producLimi}" 
+						required="true" requiredMessage="Ingrese número de productos">
+						<f:validateBean for="producLimi" disabled="true" />
+					</p:inputText>
+
+					<p:column/>
+					<p:column/>
+												
+					<p:outputLabel for="orden" value="Tipo Reporte" style="width:100%" />
+        			<p:selectOneMenu id="orden" value="#{ventaProdMMVendReportControl.orden}">
+            			<f:selectItem itemLabel="Mas Vendidos" itemValue="desc" />
+            			<f:selectItem itemLabel="Menos Vendidos" itemValue="asc" />
+        			</p:selectOneMenu>
+					
+					<p:outputLabel for="tipo" value="Referecia" style="width:100%" />
+        			<p:selectOneMenu id="tipo" value="#{ventaProdMMVendReportControl.refere}">
+            			<f:selectItem itemLabel="Cantidad" itemValue="cantidad" />
+            			<f:selectItem itemLabel="Valor" itemValue="valor" />
+        			</p:selectOneMenu>
+					
+					<p:outputLabel value="Formato" style="width:100%"/>
+    				<p:selectOneRadio value="#{ventaProdMMVendReportControl.formatoReporte}" >
+	    				<f:selectItems value="#{ventaProdMMVendReportControl.formatoReportes}" var="formatoReporte"  
+    						itemValue="#{formatoReporte.descri}" itemLabel="#{formatoReporte.descri}" />
+        			</p:selectOneRadio>
+
+				</h:panelGrid>
+				
+			</p:panel>
+
+			<div id="barraBotones">
+
+				<p:commandLink id="descargar" ajax="false" styleClass="boton"
+					value="Descargar" action="#{ventaProdMMVendReportControl.descargar}" />
+
+				<p:spacer height="2" />
+
+				<p:link value="Cancelar" outcome="ventasProdMMVend" includeViewParams="false"
+					styleClass="boton" />
+
+				<p:defaultCommand target="descargar" />
+
+			</div>
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/facelets/templates/soemTemplate.xhtml">
+
+	<ui:define name="main">
+
+		<h:form>
+
+			<p:panel id="panel" style="margin-bottom:10px"
+				header="Reporte - General">
+
+				<p:focus context="panel" />
+
+				<h:panelGrid columns="4">
+
+					<p:outputLabel for="nivelList" value="Nivel" style="width:100%"/>
+        			<p:selectOneMenu id="nivelList" value="#{balanceGeneralReportControl.planCuenNiveId}" converter="omnifaces.SelectItemsConverter" 
+        				 showCheckbox="true" style="width: 100%" required="true" requiredMessage="Seleccione Nivel"> 
+        				
+            			<f:selectItems value="#{balanceGeneralReportControl.planCuenNives}" var="planCuenNive" 
+            				itemLabel="#{planCuenNive.descri}" itemValue="#{planCuenNive.nivel}" />
+ 
+					</p:selectOneMenu>
+					
+					<p:column/>
+					<p:column/>
+
+					<p:outputLabel for="transaccionFechaDesd" value="Fecha Desde" style="width:100%" />
+					<p:calendar id="transaccionFechaDesd" value="#{balanceGeneralReportControl.transaccionDesd.fechaEmis}" 
+						pattern="dd-MM-yyyy" required="true" requiredMessage="Ingrese fecha desde"/>
+
+					<p:outputLabel for="transaccionFechaHast" value="Fecha Hasta" style="width:100%" />
+					<p:calendar id="transaccionFechaHast" value="#{balanceGeneralReportControl.transaccionHast.fechaEmis}" 
+						pattern="dd-MM-yyyy" required="true" requiredMessage="Ingrese fecha hasta"/>
+										
+					<p:outputLabel value="Formato" style="width:100%"/>
+    				<p:selectOneRadio value="#{balanceGeneralReportControl.formatoReporte}" >
+	    				<f:selectItems value="#{balanceGeneralReportControl.formatoReportes}" var="formatoReporte"  
+    						itemValue="#{formatoReporte.descri}" itemLabel="#{formatoReporte.descri}" />
+        			</p:selectOneRadio>
+																				
+				</h:panelGrid>
+				
+			</p:panel>
+
+			<div id="barraBotones">
+
+				<p:commandLink id="descargar" ajax="false" styleClass="boton"
+					value="Descargar" action="#{balanceGeneralReportControl.descargar}" />
+
+				<p:spacer height="2" />
+
+				<p:link value="Cancelar" outcome="balanceGeneral" includeViewParams="false"
+					styleClass="boton" />
+
+				<p:defaultCommand target="descargar" />
+
+			</div>
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>

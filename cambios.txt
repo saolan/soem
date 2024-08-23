@@ -1,0 +1,9 @@
+Archivos Modificados:
+soem-ejb:
+pom.xml
+RespuestaDateConverter - Gragorian calendar
+XStreamUtil - Gregorian calendar
+
+Archivos actualizados al modificar pom.xml del soem-ejb
+RecepcionComprobantesOfflineService - qName
+ObjectFactory - qName

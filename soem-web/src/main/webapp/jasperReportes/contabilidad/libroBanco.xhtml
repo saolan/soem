@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/facelets/templates/soemTemplate.xhtml">
+
+	<ui:define name="main">
+
+		<h:form>
+
+			<p:panel id="panel" style="margin-bottom:10px"
+				header="Reporte - Libro Banco">
+
+				<p:focus context="panel" />
+
+				<h:panelGrid columns="4">
+				
+					<p:outputLabel for="formPagoList" value="Forma Pago" style="width:100%"/> 
+        			<p:selectManyMenu id="formPagoList" value="#{libroBancoReportControl.formPagoIds}" converter="omnifaces.SelectItemsConverter"  
+        				 showCheckbox="true" style="width: 100%"> 
+        				
+            			<f:selectItems value="#{libroBancoReportControl.formPagos}" var="formPago" 
+            				itemLabel="#{formPago.descri}" itemValue="#{formPago.formPagoId}" />
+ 
+					</p:selectManyMenu>
+				
+					<p:column/>
+					<p:column/>
+
+					<p:outputLabel for="transaccionFechaDesd" value="Fecha Desde" style="width:100%" />
+					<p:calendar id="transaccionFechaDesd" value="#{libroBancoReportControl.transaccionDesd.fechaEmis}" 
+						pattern="dd-MM-yyyy" required="true" requiredMessage="Ingrese fecha desde"/>
+
+					<p:outputLabel for="transaccionFechaHast" value="Fecha Hasta" style="width:100%" />
+					<p:calendar id="transaccionFechaHast" value="#{libroBancoReportControl.transaccionHast.fechaEmis}" 
+						pattern="dd-MM-yyyy" required="true" requiredMessage="Ingrese fecha hasta"/>
+						
+					<p:outputLabel value="Formato" style="width:100%"/>
+    				<p:selectOneRadio value="#{libroBancoReportControl.formatoReporte}" >
+	    				<f:selectItems value="#{libroBancoReportControl.formatoReportes}" var="formatoReporte"  
+    						itemValue="#{formatoReporte.descri}" itemLabel="#{formatoReporte.descri}" />
+        			</p:selectOneRadio>
+																				
+				</h:panelGrid>
+				
+			</p:panel>
+
+			<div id="barraBotones">
+
+				<p:commandLink id="descargar" ajax="false" styleClass="boton"
+					value="Descargar" action="#{libroBancoReportControl.descargar}" />
+
+				<p:spacer height="2" />
+
+				<p:link value="Cancelar" outcome="libroBanco" includeViewParams="false"
+					styleClass="boton" />
+
+				<p:defaultCommand target="descargar" />
+
+			</div>
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>
