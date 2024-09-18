@@ -62,7 +62,6 @@ import ec.com.tecnointel.soem.documeElec.modelo.notaCredito.NotaCredito;
 import ec.com.tecnointel.soem.documeElec.modelo.notaDebito.NotaDebito;
 import ec.com.tecnointel.soem.documeElec.registroInt.DocumeElecRegisInt;
 import ec.com.tecnointel.soem.documeElec.tareas.ManejadorTareaAutoriDocu;
-import ec.com.tecnointel.soem.documeElec.tareas.ManejadorTareaConsultarEgresosNoAuto;
 import ec.com.tecnointel.soem.documeElec.tareas.ManejadorTareaEnviarCorreoDocu;
 import ec.com.tecnointel.soem.documeElec.tareas.ManejadorTareaEnviarDocu;
 import ec.com.tecnointel.soem.egreso.listaInt.EgreNotaListaInt;
@@ -760,13 +759,9 @@ public class VentaControl extends PaginaControl implements Serializable {
 			return;
 		}
 
-		if (cajaMoviAbrioSesion.getCajaMoviId() == null) {
-			return;
-		}
-
 		buscarPersClies(0);
 		conversationBegin();
-		consultarEgresosNoAutorizados();
+		
 
 		DocuEgre docuEgrePred = new DocuEgre();
 		List<DocuEgre> docuEgres = this.buscarDocuEgres();
@@ -878,6 +873,11 @@ public class VentaControl extends PaginaControl implements Serializable {
 					"Excepcion - Error buscar formas de pago - Tmp"));
 			e.printStackTrace();
 		}
+		
+		if (cajaMoviAbrioSesion.getCajaMoviId() != null) {
+			consultarEgresosNoAutorizados();
+		}
+
 	}
 
 //	Buscar y asigna impuestos
@@ -890,9 +890,9 @@ public class VentaControl extends PaginaControl implements Serializable {
 			return; // Skip postback requests.
 		}
 
-		if (cajaMoviAbrioSesion.getCajaMoviId() == null) {
-			return;
-		}
+//		if (cajaMoviAbrioSesion.getCajaMoviId() == null) {
+//			return;
+//		}
 
 		this.buscarProdPrecs(0);
 
@@ -972,7 +972,7 @@ public class VentaControl extends PaginaControl implements Serializable {
 
 		try {
 			egreTrans = egreTranLista.buscar(egreTran, null);
-		} catch (Exception e) {
+		} catch (Exception e) { 	
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, null,
 					"Excepcion - Error al buscar detalle de trasacciones"));
 			e.printStackTrace();
