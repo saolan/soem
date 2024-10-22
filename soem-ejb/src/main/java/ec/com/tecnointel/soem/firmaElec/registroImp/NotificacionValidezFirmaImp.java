@@ -29,10 +29,11 @@ public class NotificacionValidezFirmaImp implements NotificacionValidezFirmaInt 
 		String mensaje = "FIRMA_VALIDA";
 		
 		LocalDate fecha = LocalDate.now();
-		Date fechaNotificacion = Date.from(fecha.atStartOfDay(ZoneId.systemDefault()).toInstant());
+		Date fechaNotificacion = new Date();
 		
 		Parametro parametro = parametroRegis.buscarPorId(6251);
 		fecha = fecha.plusDays(Long.parseLong(parametro.getDescri()));
+		fechaNotificacion = Date.from(fecha.atStartOfDay(ZoneId.systemDefault()).toInstant());
 		
 		Path path = Paths.get(sucursal.getSucuCertEmis().getRuta(), sucursal.getSucuCertEmis().getDescri());
 
